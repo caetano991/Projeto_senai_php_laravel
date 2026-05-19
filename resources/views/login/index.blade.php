@@ -26,7 +26,7 @@
                                             <label for="password">Digite a senha</label>
                                         </div>
                                         <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                            <a href="{{ route('forget-password.show') }}" class="small text-decoration-none" href="#">Esqueceu a senha?</a>
+                                            <a href="{{ route('forget-password.show') }}" class="small text-decoration-none">Esqueceu a senha?</a>
                                             <button type="submit" class="btn btn-primary">Entrar</button>
                                         </div>                                        
                                     </form>

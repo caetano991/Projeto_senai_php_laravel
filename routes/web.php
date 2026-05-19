@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AlunoController;
+use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\LoginController;
@@ -42,10 +43,16 @@ Route::get('/logout', [LoginController::class, 'destroy'])->name('login.destroy'
 Route::middleware('auth')->group(function () {});
 
 //Cursos
-Route::get('/index-course', [CourseController::class, 'index'])->name('course.index');
-Route::get('/show-course', [CourseController::class, 'show'])->name('course.show');
-Route::get('/create-course', [CourseController::class, 'create'])->name('course.create');
-Route::post('/store-course', [CourseController::class, 'store'])->name('course.store');
-Route::get('/edit-course', [CourseController::class, 'edit'])->name('course.edit');
-Route::put('/update-course', [CourseController::class, 'update'])->name('course.update');
-Route::delete('/destroy-course', [CourseController::class, 'destroy'])->name('course.destroy');  
+Route::get('/index-course', [CourseController::class, 'index'])->name('courses.index');
+Route::get('/create-course', [CourseController::class, 'create'])->name('courses.create');
+Route::post('/store-course', [CourseController::class, 'store'])->name('courses.store');
+Route::get('/show-course/{course}', [CourseController::class, 'show'])->name('courses.show');
+Route::get('/edit-course/{course}', [CourseController::class, 'edit'])->name('courses.edit');
+Route::put('/update-course/{course}', [CourseController::class, 'update'])->name('courses.update');
+Route::delete('/destroy-course/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');   
+
+Route::get('/index-classe/{course}', [ClasseController::class, 'index'])->name('classe.index');
+Route::get('/edit-classe/{classe}', [ClasseController::class, 'edit'])->name('classe.edit');
+Route::put('/update-classe/{classe}', [ClasseController::class, 'update'])->name('classe.update');
+Route::get('/show-classe/{classe}', [ClasseController::class, 'show'])->name('classe.show');
+Route::delete('/destroy-classe/{classe}', [ClasseController::class, 'destroy'])->name('classe.destroy');    
