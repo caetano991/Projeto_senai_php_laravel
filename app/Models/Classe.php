@@ -13,7 +13,12 @@ class Classe extends Model
     protected $table = 'classes';
 
    //indica os campos que podem ser preenchidos em massa
-    protected $fillable = ['name', 'description', 'order_classe','course_id'];
+    protected $fillable = [
+        'name', 
+        'description', 
+        'order_classe',
+        'course_id'
+    ];
 
     //Cria um relacionamento entre um e muitos
     public function course()

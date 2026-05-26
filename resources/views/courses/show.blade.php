@@ -1,21 +1,58 @@
 @extends('layouts.board')
 @section('content')
 		
-    <h2>Detalhes do curso</h2>
+<div class="container-fluid px-4">
+    <div class="mb-1 hstack gap-2">
+        <h2 class="mt-3">Curso</h2>
 
-    <a href="{{ route('courses.index') }}"><button type="button">Listar cursos</button></a><br><br>
-    <a href="{{ route('courses.edit', ['course' => $course->id]) }}"><button type="button">Editar</button></a><br><br>
+        <ol class="breadcrumb mb-3 mt-3 ms-auto">
+            <li class="breadcrumb-item">
+                <a href="#" class="text-decoration-none">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">Curso</li>
+        </ol>
+    </div>
+    <div class="card mb-4">
+        <div class="card-header hstack gap-2">
+            <span>Visualizar</span>
+        
+            <span class="ms-auto d-sm-flex flex-row">
+                <a href="{{ route('classe.index', ['course' => $course->id]) }}" class="btn btn-info btn-sm me-1 mt-1 mt-md-0">Aulas</a>
+                
+                <a href="{{ route('courses.index') }}" class="btn btn-info btn-sm me-1 mb-1 mb-sm-0">Listar</a>
 
-    ID: {{ $course->id }}<br>
-    Nome: {{ $course->name }}<br>
-    Preço: {{ 'R$ ' . number_format($course->price, 2, ',', '.') }}<br>
-    Cadastrado em: {{ \Carbon\Carbon::parse($course->created_at)->format('d/m/Y H:i:s') }}<br>
-    Atualizado em: {{ \Carbon\Carbon::parse($course->updated_at)->format('d/m/Y H:i:s') }}<br>
-    
-    @if (session('success'))
-        <p style= "color: #082" >
-            {{ session('success') }}
-        </p>
-    @endif
+                <a href="{{ route('courses.edit', ['course' => $course->id]) }}" class="btn btn-warning btn-sm me-1 mb-1 mb-sm-0">Editar</a>
+
+                <form action="{{ route('courses.destroy', ['course' => $course->id]) }}" onclick="return confirm('Tem certeza que deseja excluir este curso?')"  method="POST" style="display: inline-block;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm me-1 mb-1 mb-sm-0">Apagar</button>
+                </form>
+            </span>        
+        </div>
+        <div class="card-body">
+            @if (session('success'))
+                <p style= "color: #082" >
+                {{ session('success') }}
+                </p>
+            @endif
+            <dl class="row">
+                <dt class="col-sm-3">ID</dt>
+                <dd class="col-sm-9">{{ $course->id }}</dd>
+
+                <dt class="col-sm-3">Nome</dt>
+                <dd class="col-sm-9">{{ $course->name }}</dd>
+
+                <dt class="col-sm-3">Preço</dt>
+                <dd class="col-sm-9">{{ 'R$ ' . number_format($course->price, 2, ',', '.') }}</dd>
+
+                <dt class="col-sm-3">Cadastrado em</dt>
+                <dd class="col-sm-9">{{ \Carbon\Carbon::parse($course->created_at)->format('d/m/Y H:i:s') }}</dd>
+
+                <dt class="col-sm-3">Atualizado em</dt>
+                <dd class="col-sm-9">{{ \Carbon\Carbon::parse($course->updated_at)->format('d/m/Y H:i:s') }}</dd>
+            </dl> 
+        </div>
+    </div>  
 
 @endsection

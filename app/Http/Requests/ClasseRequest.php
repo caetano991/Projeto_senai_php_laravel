@@ -12,13 +12,13 @@ class ClasseRequest extends FormRequest
     }
 
     public function rules(): array
-    {
-        return [
-			      'course_id'=>'required-if:course_id,!=,null',
-            'name' => 'required',
-            'description' => 'required',            
-        ];
-    }
+{
+    return [
+        'course_id'   => 'required|exists:courses,id',
+        'name'        => 'required|string|max:255',
+        'description' => 'required',
+    ];
+}
 
     //Traduzir as mensagens de Validação do formulário
     public function messages(): array

@@ -51,8 +51,18 @@ Route::get('/edit-course/{course}', [CourseController::class, 'edit'])->name('co
 Route::put('/update-course/{course}', [CourseController::class, 'update'])->name('courses.update');
 Route::delete('/destroy-course/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');   
 
+// Route::get('/index-classe/{course}', [ClasseController::class, 'index'])->name('classe.index');
+// Route::get('/create-classe', [ClasseController::class, 'create'])->name('classe.create');
+// Route::post('/store-classe', [ClasseController::class, 'store'])->name('classe.store');
+// Route::get('/edit-classe/{classe}', [ClasseController::class, 'edit'])->name('classe.edit');
+// Route::put('/update-classe/{classe}', [ClasseController::class, 'update'])->name('classe.update');
+// Route::get('/show-classe/{classe}', [ClasseController::class, 'show'])->name('classe.show');
+// Route::delete('/destroy-classe/{classe}', [ClasseController::class, 'destroy'])->name('classe.destroy'); 
+
 Route::get('/index-classe/{course}', [ClasseController::class, 'index'])->name('classe.index');
+Route::get('/create-classe/{course}', [ClasseController::class, 'create'])->name('classe.create');
+Route::post('/store-classe', [ClasseController::class, 'store'])->name('classe.store');
 Route::get('/edit-classe/{classe}', [ClasseController::class, 'edit'])->name('classe.edit');
 Route::put('/update-classe/{classe}', [ClasseController::class, 'update'])->name('classe.update');
 Route::get('/show-classe/{classe}', [ClasseController::class, 'show'])->name('classe.show');
-Route::delete('/destroy-classe/{classe}', [ClasseController::class, 'destroy'])->name('classe.destroy');    
+Route::delete('/destroy-classe/{classe}', [ClasseController::class, 'destroy'])->name('classe.destroy');
