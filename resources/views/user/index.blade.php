@@ -37,9 +37,12 @@
         <span>Lista de alunos cadastrados</span>
 
         <span class="ms-auto">
-            <a href="{{ route('user.create') }}" class="btn btn-success btn-sm">
-                Cadastrar
-            </a>
+            @can('create-user')
+                <a href="{{ route('user.create') }}" class="btn btn-success btn-sm">
+                    Cadastrar
+                </a>
+            @endcan
+                
             <a href="{{ route('user.generate-pdf')}}" class="btn btn-warning btn-sm">
                 <i class="fa-regular fa-file-pdf"></i> Gerar PDF</a>
         </span>
@@ -99,12 +102,15 @@
                             class="btn btn-warning btn-sm">
                             Editar
                         </a>
-
+                    
+                    @can('destroy-user')
                         <form method="POST" id="delete-form-{{ $user->id }}" action="{{ route('user.destroy', ['user' => $user->id]) }}" class="d-inline">
                             @csrf
                             @method('delete')
                             <button type="button" onclick="confirmDelete({{ $user->id }})" class="btn btn-danger btn-sm">Apagar</button>
                         </form>
+                    @endcan
+
                     </td>
                 </tr>
                 @empty

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,7 +21,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-    Paginator::useBootstrapFive();
+        //Configura o estilo da paginação para o Bootstrap
+        Paginator::useBootstrapFive();
 
+        Gate::before(function ($user) {
+            if ($user->hasRole('Super Admin')) {
+                return true; // Super Admin tem acesso a tudo
+            }
+        });
     }
 }

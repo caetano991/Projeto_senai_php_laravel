@@ -23,14 +23,14 @@
       <li>
         <a href="{{ route('user.index') }}" class="nav-link px-2 link-secondary">Home</a>
       </li>
-      <li>
-        <a href="{{ route('user.create') }}" class="nav-link px-2">Cadastrar</a>
-      </li>
-    </ul>
+      
+      @can('create-user')
+        <li>
+          <a href="{{ route('user.create') }}" class="nav-link px-2">Cadastrar</a>
+        </li>
+      @endcan
 
-    <!-- <div class="col-md-3 text-end">
-      <button type="button" class="btn btn-outline-primary me-2">Login</button>
-    </div> -->
+    </ul>
 
     <div class="col-md-3 text-end">
 	    <button href="{{ route('login.destroy') }}" type="button" class="btn btn-outline-primary me-2">Logout</button>

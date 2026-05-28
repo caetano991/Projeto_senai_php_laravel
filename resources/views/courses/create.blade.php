@@ -21,7 +21,6 @@
             <li class="breadcrumb-item">
                 <a href="{{ route('courses.index') }}"
                    class="text-decoration-none">
-
                     Cursos
                 </a>
             </li>

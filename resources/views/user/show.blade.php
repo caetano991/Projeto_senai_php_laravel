@@ -13,6 +13,7 @@
                 <a href="{{ route('user.index')}}" class="btn btn-secondary btn-sm">Listar</a>
                 <a href="{{ route('user.edit', ['user' => $user->id]) }}" class="btn btn-warning btn-sm">Editar</a>
 
+            @can('destroy-user')
                 <form method="POST" id="delete-form-{{ $user->id }}" 
                       action="{{ route('user.destroy', ['user' => $user->id]) }}" 
                       class="d-inline">
@@ -23,6 +24,7 @@
                         Apagar
                     </button>
                 </form>
+            @endcan
             </div>
         </div>
 

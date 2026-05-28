@@ -4,9 +4,11 @@
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
         <h2>Aulas do Curso</h2>
-        <a href="{{ route('classe.create', ['course' => request()->route('course')]) }}" class="btn btn-success">
-            <i class="fas fa-plus me-1"></i> Cadastrar Aula
-        </a>
+            @can('create-classe')
+                <a href="{{ route('classe.create', ['course' => request()->route('course')]) }}" class="btn btn-success">
+                    <i class="fas fa-plus me-1"></i> Cadastrar Aula
+                </a>
+            @endcan
     </div>
 
     <div class="card mb-4">
@@ -48,6 +50,7 @@
                                         Editar
                                     </a>
 
+                                @can('delete-course')
                                     <form action="{{ route('classe.destroy', ['classe' => $classe->id]) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -55,6 +58,8 @@
                                             Apagar
                                         </button>
                                     </form>
+                                @endcan
+                                
                                 </div>
                             </td>
                         </tr>

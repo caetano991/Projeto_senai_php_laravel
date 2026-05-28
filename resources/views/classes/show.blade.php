@@ -29,6 +29,7 @@
                     <i class="fas fa-edit me-1"></i> Editar
                 </a>
 
+            @can('destroy-classe')
                 <form action="{{ route('classe.destroy', ['classe' => $classe->id]) }}" method="POST" class="d-inline-block" onclick="return confirm('Tem certeza que deseja excluir esta aula?')">
                     @csrf
                     @method('DELETE')
@@ -36,6 +37,8 @@
                         <i class="fas fa-trash me-1"></i> Apagar
                     </button>
                 </form>
+            @endcan
+            
             </span>        
         </div>
         
