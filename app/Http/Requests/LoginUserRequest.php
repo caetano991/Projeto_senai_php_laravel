@@ -21,12 +21,15 @@ class LoginUserRequest extends FormRequest
      */
     public function rules(): array
     {
-         return [
-			    'name' => 'required',
-                'email' => 'required|email|unique:users,email,',
-                'password' => 'required|min:6'
-            ];
-    }
+
+        $userId = $this->route('user');
+        
+        return [
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|',
+        ];
+    }   
 
     public function messages(): array
     {

@@ -58,21 +58,26 @@ class LoginController extends Controller
         //validar os dados do formulário
         $request->validated();
 
+               
         try {
             //Criar o usuário
-            User::create([
+            $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => $request->password,
             ]);
 
+            // Cadastrar papel para o usuário
+            $user->assignRole("Aluno");
+
             //Redirecionar o usuário, enviar a mensagem de sucesso
             return redirect()->route('login.index')->with('success', 'Usuário cadastrado com sucesso! Faça login para acessar a página de usuários.');
+
         } catch (\Exception $e) {
             //Redirecionar o usuário, enviar a mensagem de erro
             return back()->withInput()->with('error', 'Erro ao cadastrar usuário: ' . $e->getMessage());
         }
-    }
+}
 
     public function destroy()
     {

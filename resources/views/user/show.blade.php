@@ -1,65 +1,86 @@
 @extends('layouts.admin')
-
 @section('content')
-<div class="container mt-4">
-
-    <div class="card shadow-sm">
-        
-        {{-- HEADER COM TÍTULO + BOTÕES --}}
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Visualizar alunos</h4>
-
-            <div>
-                <a href="{{ route('user.index')}}" class="btn btn-secondary btn-sm">Listar</a>
-                <a href="{{ route('user.edit', ['user' => $user->id]) }}" class="btn btn-warning btn-sm">Editar</a>
-
-            @can('destroy-user')
-                <form method="POST" id="delete-form-{{ $user->id }}" 
-                      action="{{ route('user.destroy', ['user' => $user->id]) }}" 
-                      class="d-inline">
-                    @csrf
-                    @method('delete') 
-                    <button type="button" onclick="confirmDelete( {{ $user->id }} )" 
-                            class="btn btn-danger btn-sm">
-                        Apagar
-                    </button>
-                </form>
-            @endcan
-            </div>
+     <div class="container-fluid px-4">
+        <div class="mb-1 hstack gap-2">
+            <h2 class="mt-3">Usuário</h2>
+            <ol class="breadcrumb mb-3 mt-3 ms-auto">
+                <li class="breadcrumb-item"><a class="text-decoration-none" href="{{ route('courses.index') }}">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item"><a class="text-decoration-none" href="{{ route('user.index') }}">Usuários</a></li>
+                <li class="breadcrumb-item active">Usuário</li>
+            </ol>
         </div>
+        <div class="card mb-4 border-light shadow">
+            <div class="card-header hstack gap-2">
 
-        {{-- BODY --}}
-        <div class="card-body">
-            <div class="row">
+                <span>Visualizar</span>
 
-                {{-- Foto --}}
-                <div class="col-md-4 text-center">
-                    @if ($user->image)
-                        <img src="{{ asset('img/' . $user->image) }}" 
-                             alt="Foto de perfil" 
-                             class="img-fluid rounded mb-3">
-                    @else
+                <span class="ms-auto d-sm-flex flex-row">
+                    @can('index-user')
+                        <a href="{{ route('user.index') }}" class="btn btn-info btn-sm me-1"><i class="fa-solid fa-list"></i>
+                            Listar</a>
+                    @endcan
+
+                    @can('edit-user')
+                        <a href="{{ route('user.edit', ['user' => $user->id]) }}" class="btn btn-warning btn-sm me-1"><i
+                                class="fa-solid fa-pen-to-square"></i> Editar
+                        </a>
+                    @endcan
+                   
+                    @can('destroy-user')
+                    <form method="POST" action="{{ route('user.destroy', ['user' => $user->id]) }}">
+                        @csrf
+                        @method('delete')
+                        <button type="submit" class="btn btn-danger btn-sm me-1"
+                            onclick="return confirm('Tem certeza que deseja apagar este registro?')"><i
+                                class="fa-regular fa-trash-can"></i> Apagar</button>
+                    </form>
+                    @endcan
+                </span>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+
+                    {{-- Exibição da imagem de perfil --}}
+                    <dt class="col-sm-3">Foto de Perfil</dt>
+                    <dd class="col-sm-9">
+                        @if ($user->image)
+                        <img src="{{ asset('img/'. $user->image) }}" alt="Foto de perfil" class="img-thumbnail">
+                        @else
                         <span class="text-muted">Sem foto de perfil</span>
-                    @endif
-                </div>
+                        @endif
+                    </dd>
 
-                {{-- Dados --}}
-                <div class="col-md-8">
-                    <p><strong>ID:</strong> {{ $user->id }}</p>
-                    <p><strong>Nome:</strong> {{ $user->name }}</p>
-                    <p><strong>E-mail:</strong> {{ $user->email }}</p>
-                    <p><strong>Cadastrado em:</strong> 
-                        {{ \Carbon\Carbon::parse($user->created_at)->format('d/m/Y H:i:s') }}
-                    </p>
-                    <p><strong>Editado em:</strong> 
-                        {{ \Carbon\Carbon::parse($user->updated_at)->format('d/m/Y H:i:s') }}
-                    </p>
-                </div>
+                    <dt class="col-sm-3">ID: </dt>
+                    <dd class="col-sm-9">{{ $user->id }}</dd>
 
+                    <dt class="col-sm-3">Nome: </dt>
+                    <dd class="col-sm-9">{{ $user->name }}</dd>
+
+                    <dt class="col-sm-3">E-mail: </dt>
+                    <dd class="col-sm-9">{{ $user->email }}</dd>
+
+                    <dt class="col-sm-3">Papel: </dt>
+                    <dd class="col-sm-9">
+                        @forelse ($user->getRoleNames() as $role)
+                            {{ $role }}
+                        @empty
+                            {{ "-" }}
+                        @endforelse    
+                    </dd>
+
+                    <dt class="col-sm-3">Cadastrado: </dt>
+                    <dd class="col-sm-9">
+                        {{ \Carbon\Carbon::parse($user->created_at)->tz('America/Sao_Paulo')->format('d/m/Y H:i:s') }}
+                    </dd>
+
+                    <dt class="col-sm-3">Editado: </dt>
+                    <dd class="col-sm-9">
+                        {{ \Carbon\Carbon::parse($user->updated_at)->tz('America/Sao_Paulo')->format('d/m/Y H:i:s') }}
+                    </dd>
+
+                </dl>
             </div>
         </div>
-
     </div>
-
-</div>
 @endsection

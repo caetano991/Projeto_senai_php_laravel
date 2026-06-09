@@ -7,36 +7,42 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Exception;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
     // LISTAR
-    public function index (Request $request){ 
-		// Realiza uma consulta ao modelo User, aplicando filtros dinamicamente conforme os parâmetros de requisição 
-		$users = User::when($request->has('name'), function ($whenQuery) use ($request) { 
-		// Se houver o parâmetro 'name' na requisição, aplica um filtro LIKE no campo 'name'
-		$whenQuery->where('name', 'like', '%' . $request->name . '%');
-		}) 
-		->when($request->has('email'), function ($whenQuery) use ($request) { 
-		// Se houver o parâmetro 'email' na requisição, aplica um filtro LIKE no campo 'email'
-		$whenQuery->where('email', 'like', '%' . $request->email . '%'); 
-		}) 
-		->orderBy('id')// Ordena os resultados pelo ID 
-		->paginate(10) // Pagina os resultados, exibindo 10 por página 
-		->withQueryString(); // Mantém os parâmetros da query string na paginação 
-		
-		// Retorna a view 'user.index' passando os dados necessários 
-		return view('user.index', [ 
-				'menu' => 'users', // Indica qual menu está ativo 
-				'users' => $users, // Lista paginada de usuários filtrada 
-				'name' => $request->name, // Preserva o filtro 'name' no formulário 
-				'email' => $request->email // Preserva o filtro 'email' no formulário 
-				]); 
-		}
+    public function index(Request $request)
+    {
+        // Realiza uma consulta ao modelo User, aplicando filtros dinamicamente conforme os parâmetros de requisição 
+        $users = User::when($request->has('name'), function ($whenQuery) use ($request) {
+            // Se houver o parâmetro 'name' na requisição, aplica um filtro LIKE no campo 'name'
+            $whenQuery->where('name', 'like', '%' . $request->name . '%');
+        })
+            ->when($request->has('email'), function ($whenQuery) use ($request) {
+                // Se houver o parâmetro 'email' na requisição, aplica um filtro LIKE no campo 'email'
+                $whenQuery->where('email', 'like', '%' . $request->email . '%');
+            })
+            ->orderBy('id') // Ordena os resultados pelo ID 
+            ->paginate(10) // Pagina os resultados, exibindo 10 por página 
+            ->withQueryString(); // Mantém os parâmetros da query string na paginação 
 
-    // FORM CRIAR
-    public function create(){
-        return view('user.create');
+        // Retorna a view 'user.index' passando os dados necessários 
+        return view('user.index', [
+            'menu' => 'users', // Indica qual menu está ativo 
+            'users' => $users, // Lista paginada de usuários filtrada 
+            'name' => $request->name, // Preserva o filtro 'name' no formulário 
+            'email' => $request->email // Preserva o filtro 'email' no formulário 
+        ]);
+    }
+
+    public function create()
+    {
+        //recuperar os papéis
+        $roles = Role::pluck('name')->all();
+
+        return view('user.create', ['menu' => 'users', 'roles' => $roles]);
     }
 
     // SALVAR
@@ -52,20 +58,37 @@ class UserController extends Controller
             $requestImage->move(public_path('img/'), $imageName);
         }
 
+        // Validar o formulário
         $request->validated();
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password), // ✅ corrigido
-            'image' => $imageName,
-        ]);
 
-        return redirect()->route('user.index')->with('success', 'Usuário cadastrado com sucesso!');
+        try {
+
+            // Cadastrar no banco de dados na tabela usuários
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => $request->password,
+                'image' => $imageName,
+            ]);
+
+            // Cadastrar papel para o usuário
+            $user->assignRole($request->roles);
+
+
+            // Redirecionar o usuário, enviar a mensagem de sucesso
+            return redirect()->route('user.show', ['user' => $user->id])->with('success', 'Usuário cadastrado com sucesso!');
+        } catch (Exception $e) {
+
+
+            // Redirecionar o usuário, enviar a mensagem de erro
+            return back()->withInput()->with('error', 'Usuário não cadastrado!');
+        }
     }
 
     // MOSTRAR (com navegação)
-    public function show(User $user){
+    public function show(User $user)
+    {
         $prev = User::where('id', '<', $user->id)->orderBy('id', 'desc')->first();
         $next = User::where('id', '>', $user->id)->orderBy('id')->first();
 
@@ -73,19 +96,23 @@ class UserController extends Controller
     }
 
     // EDITAR (com navegação)
-    public function edit(User $user){
-        $prev = User::where('id', '<', $user->id)->orderBy('id', 'desc')->first();
-        $next = User::where('id', '>', $user->id)->orderBy('id')->first();
+    public function edit(User $user)
+    {
 
-        return view('user.edit', compact('user', 'prev', 'next'));
+        $roles = Role::pluck('name')->all();
+
+        $userRoles = $user->roles->pluck('name')->first();
+
+        return view('user.edit', ['menu' => 'users', 'user' => $user, 'roles' => $roles, 'userRoles' => $userRoles]);
     }
 
     // ATUALIZAR
-    public function update(UserRequest $request, User $user){
-        $request->validated();
+    public function update(UserRequest $request, User $user)
+    {
 
-        $imageName = $user->image;
+        $imageName = $user->image; // valor atual por padrão
 
+        // Se tiver nova imagem, faz o upload e substitui
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $requestImage = $request->file('image');
             $extension = $requestImage->extension();
@@ -94,69 +121,87 @@ class UserController extends Controller
             $requestImage->move(public_path('img/'), $imageName);
         }
 
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'image' => $imageName,
-        ];
+        // Validar o formulário
+        $request->validated();
 
-        // Atualiza senha só se preencher
-        if (!empty($request->password)) {
-            $data['password'] = Hash::make($request->password);
+        try {
+
+            // Editar as informações do registro no banco de dados
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+            ]);
+
+            // Editar papel para o usuário
+            $user->syncRoles($request->roles);
+
+            // Redirecionar o usuário, enviar a mensagem de sucesso
+            return redirect()->route('user.show', ['user' => $request->user])->with('success', 'Usuário editado com sucesso!');
+        } catch (Exception $e) {
+
+            // Redirecionar o usuário, enviar a mensagem de erro
+            return back()->withInput()->with('error', 'Usuário não editado!');
         }
-
-        $user->update($data); // ✅ ESSENCIAL
-
-        return redirect()->route('user.show', $user)
-            ->with('success', 'Usuário atualizado com sucesso!');
     }
 
     // DELETAR
-    public function destroy(User $user){
-        $user->delete();
+    public function destroy(User $user)
+    {
+        try {
+            // Excluir o registro do banco de dados
+            $user->delete();
 
-        return redirect()->route('user.index')
-            ->with('delete_success', 'Usuário excluído com sucesso!');
+            // Remove todos os papéis atribuídos ao usuário
+            $user->syncRoles([]);
+
+            // Redirecionar o usuário, enviar a mensagem de sucesso
+            return redirect()->route('user.index')->with('success', 'Usuário excluído com sucesso!');
+        } catch (Exception $e) {
+
+
+            // Redirecionar o usuário, enviar a mensagem de erro
+            return redirect()->route('course.index')->with('error', 'Usuário não excluído!');
+        }
     }
 
     //Gerar PDF Pesquisa
-public function generatePdf(Request $request)
-{
-    $users = User::when($request->has('name'), function ($whenQuery) use ($request) {
-        $whenQuery->where('name', 'like', '%' . $request->name . '%');
-    })
-    ->when($request->has('email'), function ($whenQuery) use ($request) {
-        $whenQuery->where('email', 'like', '%' . $request->email . '%');
-    })
-    ->when($request->filled('start_date_registration'), function ($whenQuery) use ($request){
-        $whenQuery->where('created_at', '>=', \Carbon\Carbon::parse($request->start_date_registration)->format('Y-m-d H:i:s'));
-    })
-    ->when($request->filled('end_date_registration'), function ($whenQuery) use ($request){
-        $whenQuery->where('created_at', '<=', \Carbon\Carbon::parse($request->end_date_registration)->format('Y-m-d H:i:s'));
-    })
-    ->orderBy('created_at')
-    ->get();
+    public function generatePdf(Request $request)
+    {
+        $users = User::when($request->has('name'), function ($whenQuery) use ($request) {
+            $whenQuery->where('name', 'like', '%' . $request->name . '%');
+        })
+            ->when($request->has('email'), function ($whenQuery) use ($request) {
+                $whenQuery->where('email', 'like', '%' . $request->email . '%');
+            })
+            ->when($request->filled('start_date_registration'), function ($whenQuery) use ($request) {
+                $whenQuery->where('created_at', '>=', \Carbon\Carbon::parse($request->start_date_registration)->format('Y-m-d H:i:s'));
+            })
+            ->when($request->filled('end_date_registration'), function ($whenQuery) use ($request) {
+                $whenQuery->where('created_at', '<=', \Carbon\Carbon::parse($request->end_date_registration)->format('Y-m-d H:i:s'));
+            })
+            ->orderBy('created_at')
+            ->get();
 
-    // Somar total de registros
-    $totalRecords = $users->count('id');
+        // Somar total de registros
+        $totalRecords = $users->count('id');
 
-    // Verificar se a quantidade de registros ultrapassa o limite para gerar PDF
-    $numberRecordsAllowed = 500;
-    if($totalRecords > $numberRecordsAllowed){
+        // Verificar se a quantidade de registros ultrapassa o limite para gerar PDF
+        $numberRecordsAllowed = 500;
+        if ($totalRecords > $numberRecordsAllowed) {
 
-        // Redirecionar o usuário, enviar a mensagem de erro
-        return redirect()->route('user.index', [
-            'name' => $request->name,
-            'email' => $request->email,
-            'start_date_registration' => $request->start_date_registration,
-            'end_date_registration' => $request->end_date_registration,
-        ])->with('error', "Limite de registros ultrapassado para gerar PDF. O limite é de $numberRecordsAllowed registros!");
+            // Redirecionar o usuário, enviar a mensagem de erro
+            return redirect()->route('user.index', [
+                'name' => $request->name,
+                'email' => $request->email,
+                'start_date_registration' => $request->start_date_registration,
+                'end_date_registration' => $request->end_date_registration,
+            ])->with('error', "Limite de registros ultrapassado para gerar PDF. O limite é de $numberRecordsAllowed registros!");
+        }
+
+        // Carregar a string com o HTML/conteúdo e determinar a orientação e o tamanho do arquivo
+        $pdf = PDF::loadView('user.generatePdf', ['users' => $users])->setPaper('a4', 'portrait');
+
+        // Fazer o download do arquivo
+        return $pdf->download('list_users.pdf');
     }
-
-    // Carregar a string com o HTML/conteúdo e determinar a orientação e o tamanho do arquivo
-    $pdf = PDF::loadView('user.generatePdf', ['users' => $users])->setPaper('a4', 'portrait');
-
-    // Fazer o download do arquivo
-    return $pdf->download('list_users.pdf');
-}
 }

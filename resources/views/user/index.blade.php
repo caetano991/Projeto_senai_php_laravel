@@ -37,6 +37,7 @@
         <span>Lista de alunos cadastrados</span>
 
         <span class="ms-auto">
+            
             @can('create-user')
                 <a href="{{ route('user.create') }}" class="btn btn-success btn-sm">
                     Cadastrar
