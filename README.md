@@ -1,59 +1,92 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎓 Sistema de Gestão Escolar (CRUD & Controle de Acesso)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este é um sistema robusto de gestão escolar desenvolvido para gerenciar alunos, cursos e matrículas. A aplicação conta com um sistema completo de permissões e restrições de acesso baseadas em níveis de usuário, além de funcionalidades avançadas como geração de relatórios em PDF e upload de arquivos.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Funcionalidades Principais
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Controle de Acesso Multinível (RBAC):** Restrição de rotas e visualizações baseadas no papel (*role*) do usuário autenticado:
+  - **Super Admin:** Controle total do sistema, configurações globais e gerenciamento de administradores.
+  - **Admin:** Gerenciamento completo de alunos, professores e cursos.
+  - **Professor:** Acesso a pautas, notas e turmas vinculadas.
+  - **Aluno:** Visualização de perfil, cursos matriculados e histórico.
+- **CRUD Completo:** Cadastro, leitura, edição e exclusão de:
+  - **Alunos:** Incluindo upload de foto de perfil e definição de papéis.
+  - **Cursos:** Controle de listagem, preços e gerenciamento de aulas.
+- **Emissão de Relatórios:** Geração dinâmica de arquivos **PDF** para listagens e dados do sistema (otimizando a exportação de dados).
+- **Filtros e Buscas Dinâmicas:** Sistema de pesquisa avançada por nome, e-mail e outros critérios diretamente na listagem de registros.
+- **Autenticação Segura:** Tela de login customizada com proteção de rotas e recuperação de senha.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🛠️ Tecnologias Utilizadas
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- **Backend:** PHP (Framework **Laravel**)
+- **Frontend:** Blade Templates, HTML5, CSS3, JavaScript (Layout responsivo com Sidebar de navegação)
+- **Geração de PDF:** Dompdf / Laravel-Dompdf *(ajuste se usou outra biblioteca)*
+- **Banco de Dados:** MySQL
+- **Autenticação:** Laravel Breeze / Fortify / Autenticação Customizada *(ajuste conforme o que utilizou)*
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 📸 Demonstração do Sistema
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 1. Tela de Login / Área Restrita
+Portal de entrada seguro com validação de credenciais e controle de sessões.
+<img width="1919" height="969" alt="Captura de tela 2026-06-16 161458" src="https://github.com/user-attachments/assets/a004c39a-ccfe-43da-95c5-cd9615a4adee" />
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 2. Painel de Controle (Listagem de Alunos)
+Dashboard administrativo exibindo a tabela de dados, ações de CRUD (Visualizar, Editar, Apagar), sistema de busca e botões para **Gerar PDF**.
+<img width="1919" height="968" alt="Captura de tela 2026-06-16 162415" src="https://github.com/user-attachments/assets/b7bf5df3-0e41-4850-b233-c9dbd7b1db4e" />
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Formulário de Cadastro (com Upload de Imagem)
+Interface de cadastro de aluno contendo campos estruturados, validação de senhas, atribuição de papéis e input para foto de perfil.
+<img width="1916" height="968" alt="Captura de tela 2026-06-16 161757" src="https://github.com/user-attachments/assets/efb0299c-a1a9-4caf-9589-e551a151980f" />
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4. Gestão de Cursos
+Módulo dedicado ao gerenciamento de turmas, exibição de preços e vinculação de aulas.
+<img width="1919" height="972" alt="Captura de tela 2026-06-16 161543" src="https://github.com/user-attachments/assets/1699ddd7-7b24-4eb0-88be-c4bf5c4f79ad" />
+<img width="1919" height="968" alt="Captura de tela 2026-06-16 161618" src="https://github.com/user-attachments/assets/1dfa3e1b-27d9-41a1-adf3-2b3c41fc1c58" />
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 🔧 Como Executar o Projeto Localmente
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. Clone o repositório:
+   ```bash
+   git clone [https://github.com/SEU_USUARIO/NOME_DO_REPOSITORIO.git](https://github.com/SEU_USUARIO/NOME_DO_REPOSITORIO.git)
+Acesse a pasta do projeto:
+
+Bash
+cd NOME_DO_REPOSITORIO
+Instale as dependências:
+
+Bash
+composer install
+Configure o arquivo .env:
+
+Bash
+cp .env.example .env
+Abra o arquivo .env e configure a conexão com o seu banco de dados MySQL.
+
+Gere a chave da aplicação:
+
+Bash
+php artisan key:generate
+Rode as migrações e os Seeders (se houver dados de teste compartilhados):
+
+Bash
+php artisan migrate --seed
+Inicie o servidor:
+
+Bash
+php artisan serve
+Acesse no navegador: http://127.0.0.1:8000
+
+👨‍💻 Autor
+Desenvolvido por [Seu Nome Completo] Estudante de Análise e Desenvolvimento de Sistemas (ADS) no SENAI.
