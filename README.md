@@ -89,4 +89,4 @@ php artisan serve
 Acesse no navegador: http://127.0.0.1:8000
 
 👨‍💻 Autor
-Desenvolvido por [Seu Nome Completo] Estudante de Análise e Desenvolvimento de Sistemas (ADS) no SENAI.
+Desenvolvido por Miguel Caetano. Estudante de Análise e Desenvolvimento de Sistemas (ADS) no SENAI.
